@@ -23,7 +23,7 @@ class Descuento:
     
     @tipo.setter
     def tipo(self, valor):
-        self.__tipo = tipo
+        self.__tipo == tipo
     
     @property
     def valor(self):
