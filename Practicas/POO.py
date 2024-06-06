@@ -1,8 +1,53 @@
+TIPO_DESC_FIJO = 'Fijo'
+TIPO_DESC_PORC = 'Porcentaje'
+
+class Descuento:
+
+    def __init__(self, tipo, valor):
+        if not isinstance (valor, int):
+            raise ValueError ('Constructor descuento debe ser un número')
+        if not isinstance (tipo, str):
+            raise ValueError ('Costructor debe ser un string')
+        if tipo != TIPO_DESC_PORC and tipo != TIPO_DESC_FIJO:
+            raise ValueError ('Costructor descuento: el tipo debe ser fijo o porcentaje')
+        if tipo == TIPO_DESC_FIJO and valor<=0:
+            raise ValueError ('Costructor descuento: el valor en el tipo fijo debe ser mayor a 0')
+        if tipo == TIPO_DESC_PORC and (valor<=0 or valor>100) :
+            raise ValueError ('Costructor descuento: el valor en el tipo porcentaje debe estar entre 0 y 100')
+        self.__tipo = tipo
+        self.__valor = valor
+    
+    @property
+    def tipo(self):
+        return self.__tipo
+    
+    @tipo.setter
+    def tipo(self, valor):
+        self.__tipo = tipo
+    
+    @property
+    def valor(self):
+        return self.__valor
+    
+    @valor.setter
+    def valor(self, valor):
+        self.__valor = valor
+    
+    def aplicar_descuento (self, precio):
+        if self.__tipo == TIPO_DESC_FIJO:
+            if precio > self.__valor:
+                return precio - self.__valor
+            else:
+                return 0
+        else:
+            return precio - precio*(self.__valor/100)
+            
 class Producto:
-    def __init__(self, codigo, nombre, precio):
+    def __init__(self, codigo, nombre, precio, descuento=None):
         self.__codigo = codigo
         self.__nombre = nombre
         self.__precio = precio
+        self.__descuento = descuento
 
     @property
     def codigo(self):
@@ -22,14 +67,17 @@ class Producto:
 
     @property
     def precio(self):
-        return self.__precio
+        if self.__descuento == None:
+            return self.__precio
+        else:
+            return self.__descuento.aplicar_descuento(self.__precio)
     
     @precio.setter
     def precio(self, valor):
         self.__precio = valor
     
     def calcular_total(self, unidades):
-        return self.__precio * unidades
+        return self.precio * unidades
 
     def __str__(self):
         return f'codigo: {self.__codigo}, nombre: {self.__nombre}, precio: {self.__precio}'
@@ -79,9 +127,13 @@ class Pedido:
         for producto, cantidad in zip(self.__productos, self.__cantidades):
             print(f'producto > ({producto})  cantidad: {cantidad}')
 
+desc1= Descuento (TIPO_DESC_FIJO, 5)
+desc2= Descuento (TIPO_DESC_PORC, 50)
+
+
 p1 = Producto(1, "producto1", 5)
-p2 = Producto(2, "producto2", 10)
-p3 = Producto(3, "producto3", 15)
+p2 = Producto(2, "producto2", 10, desc1)
+p3 = Producto(3, "producto3", 15, desc2)
 
 print(p1)
 print(p2)
@@ -111,3 +163,4 @@ except Exception as e:
 
 print('Total pedido: ' + str(pedido.total_pedido()))
 pedido.mostrar_pedido()
+
