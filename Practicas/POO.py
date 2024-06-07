@@ -22,7 +22,7 @@ class Descuento:
         return self.__tipo
     
     @tipo.setter
-    def tipo(self, valor):
+    def tipo(self, tipo):
         self.__tipo == tipo
     
     @property
